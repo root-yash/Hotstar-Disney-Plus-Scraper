@@ -6,9 +6,7 @@ import numpy as np
 import nest_asyncio
 nest_asyncio.apply()
 
-
-
-class hotstar:
+class crawler:
     def __init__(self, link: str):
         self.links = set()
         asyncio.get_event_loop().run_until_complete(self.__crawler(link))
@@ -16,6 +14,9 @@ class hotstar:
         self.links = self.__create_link( domain, list(self.links) )
 
     async def __crawler(self, link):
+        """
+        Crawl Through page and get every link
+        """
         previous_html = 0
         browser = await launch()
         page = await browser.newPage()
@@ -29,7 +30,7 @@ class hotstar:
             # parse html
             parsed_html = BeautifulSoup(html, 'html.parser')
             shows_html = parsed_html.find("div", {"class": "resClass"})
-            
+
             if shows_html is not None:
 
                 # break if previous html exists 
@@ -53,6 +54,9 @@ class hotstar:
         await browser.close()
 
     def __create_link(self, domain, links):
+        """
+            Add Domain + link from links
+        """
         for i in range(len(links)):
             links[i] = domain+links[i]
         return links

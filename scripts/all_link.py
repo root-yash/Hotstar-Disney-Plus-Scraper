@@ -1,13 +1,13 @@
-from crawler import hotstar
+from crawler import crawler
 
 class get_link:
     def __init__(self, link: str):
         print("Starting....")
         links = self.links_producer(link)
-        self.links_dict = self.page_link(links)
+        self.links_dict = self.page_link(links[0:1])
 
     def links_producer(self, link: str) -> list:
-        hot_obj = hotstar(link)
+        hot_obj = crawler(link)
         return hot_obj.links
     
     def genre(self, link: str) -> str:
