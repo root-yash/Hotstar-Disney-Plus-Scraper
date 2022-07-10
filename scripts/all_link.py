@@ -4,7 +4,7 @@ class get_link:
     def __init__(self, link: str):
         print("Starting....")
         links = self.links_producer(link)
-        self.links_dict = self.page_link(links[0:1])
+        self.links_dict = self.page_link(links)
 
     def links_producer(self, link: str) -> list:
         hot_obj = crawler(link)
