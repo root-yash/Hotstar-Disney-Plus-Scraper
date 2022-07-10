@@ -71,5 +71,5 @@ def dataframe_structuring(data_list: list)->None:
     # save dataframe 
     df = pd.DataFrame(data_dict)
     df.dropna(inplace = True)
-    df.replace("not present", None)
+    df.replace("not present", None, inplace= True)
     df.to_csv("temp/hotstar.csv", index= False)
