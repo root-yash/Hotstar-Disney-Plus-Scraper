@@ -1,4 +1,3 @@
-from all_link import get_link
 import asyncio, os
 from pyppeteer import launch
 from bs4 import BeautifulSoup
@@ -7,31 +6,33 @@ import nest_asyncio
 nest_asyncio.apply()
 from tqdm import tqdm
 from utils import load_json_hotstar, save_json_hotstar
+from link_xml import all_links
+
 class get_hotstar_data:
 
-    def __init__(self, link):
+    def __init__(self):
         self.data_dict = {}
         self.data_dict_location = "temp/hotstar.json"
         
         links = None
+
         if os.path.exists(self.data_dict_location):
             print("loading previous data")
-            self.data_dict, links = load_json_hotstar(self.data_dict_location)
+            self.data_dict, links, self.first_episode = load_json_hotstar(self.data_dict_location)
+        
 
         if links is None:
-            obj_link = get_link(link)
-            links = self.__remove_duplicate(obj_link.links_dict)
-            obj_link = None
+            obj = all_links()
+            data_dict = obj.get_links()
+            links = data_dict["movie_show"]
+
+            self.first_episode = data_dict["first_episode"]
+            obj = None
+            data_dict = None
+            
 
         print("________________Getting Information____________")
         asyncio.get_event_loop().run_until_complete(self.get_hotstar_details(links))
-
-    def __remove_duplicate(self, link_dict: dict):
-        links = ()
-        for i in link_dict:
-            links += link_dict[i]
-        links_list = set(links)
-        return list(links_list)
 
     def hotstar_data(self, show, flag: str) -> dict:
         """
@@ -53,11 +54,15 @@ class get_hotstar_data:
 
             else:
                 data_dict.update({"title": show.find("h1", {"class": "toptitle clear-both"}).text.strip()})
-                data_dict.update({"year": show.find_all("span",{"class": "action-dot"})[1].text.split(" ")[-1]})
+                try:
+                    data_dict.update({"year": show.find_all("span",{"class": "action-dot"})[1].text.split(" ")[-1]})
+                except:
+                    data_dict.update({"year": "not present"})
                 data_dict.update({"age_rating":meta_data[3]})
                 data_dict.update({"seasons": meta_data[0].split(" ")[0]})
                 data_dict.update({"episodes": meta_data[1].split(" ")[0]})
         except:
+            print(meta_data)
             if len(data_dict) < 5:
                 data_dict = {}
 
@@ -89,7 +94,7 @@ class get_hotstar_data:
                 self.data_dict.update({id: None})
 
             if (i+1)%20 == 0 or len(links) == i+1:
-                save_json_hotstar(self.data_dict, links[i+1:], self.data_dict_location)
+                save_json_hotstar(self.data_dict, links[i+1:], self.data_dict_location, self.first_episode)
 
             await page.close()
             await browser.disconnect()

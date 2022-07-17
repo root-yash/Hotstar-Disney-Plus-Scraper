@@ -1,17 +1,18 @@
 import json
 import pandas as pd 
+from fix_years import fix_years_dataframe
        
-def save_json_hotstar(data_dict, links, file_name: str) -> None:
-    json_dict = {"data_dict": data_dict, "links": links}
+def save_json_hotstar(data_dict, links, file_name: str, first_episode) -> None:
+    json_dict = {"data_dict": data_dict, "links": links, "first_episode": first_episode}
     with open(file_name, "w") as f:
         json.dump(json_dict, f)
 
 def load_json_hotstar(file_name: str):
     with open(file_name, "r") as f:
         json_dict = json.load(f)
-    return json_dict["data_dict"], json_dict["links"]
+    return json_dict["data_dict"], json_dict["links"], json_dict["first_episode"]
 
-def dataframe_structuring(data_list: list)->None:
+def dataframe_structuring(data_list: list, first_episode: dict)->None:
     """
         List of data and this function will structure that and save it as csv
     """
@@ -54,17 +55,19 @@ def dataframe_structuring(data_list: list)->None:
             
             # convert hour to min
             time = i[6].split(" ")
-            if time[1] == "hr":
-                time_t = int(time[0]) * 60 
-                try:
-                    time_t += int(time[2])
-                except:
-                    pass
-                time = time_t
-            else:
-                time = int(time[0])
-
-            data_dict["running_time"].append(time)
+            try:
+                if time[1] == "hr":
+                    time_t = int(time[0]) * 60 
+                    try:
+                        time_t += int(time[2])
+                    except:
+                        pass
+                    time = time_t
+                else:
+                    time = int(time[0])
+                data_dict["running_time"].append(time)
+            except:
+                data_dict["running_time"].append(None)
             data_dict["seasons"].append("not present")
             data_dict["episodes"].append("not present")
     
@@ -72,4 +75,5 @@ def dataframe_structuring(data_list: list)->None:
     df = pd.DataFrame(data_dict)
     df.dropna(inplace = True)
     df.replace("not present", None, inplace= True)
+    df = fix_years_dataframe(df,first_episode)
     df.to_csv("temp/hotstar.csv", index= False)
