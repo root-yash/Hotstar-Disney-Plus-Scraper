@@ -49,7 +49,7 @@ def dataframe_structuring(data_list: list, first_episode: dict)->None:
             except:
                 data_dict["episodes"].append(None)
 
-            data_dict["running_time"].append("not present")
+            data_dict["running_time"].append("np")
         except:
             data_dict["type"].append("movie")
             
@@ -68,12 +68,13 @@ def dataframe_structuring(data_list: list, first_episode: dict)->None:
                 data_dict["running_time"].append(time)
             except:
                 data_dict["running_time"].append(None)
-            data_dict["seasons"].append("not present")
-            data_dict["episodes"].append("not present")
+            data_dict["seasons"].append("np")
+            data_dict["episodes"].append("np")
     
     # save dataframe 
     df = pd.DataFrame(data_dict)
     df.dropna(inplace = True)
-    df.replace("not present", None, inplace= True)
+    df.replace("np", None, inplace= True)
     df = fix_years_dataframe(df,first_episode)
+    df.replace("not present", None, inplace= True)
     df.to_csv("temp/hotstar.csv", index= False)
