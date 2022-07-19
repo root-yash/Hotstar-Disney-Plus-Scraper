@@ -13,6 +13,14 @@
 
 **Ans.** Calm down as your progress is being saved in temp folder.
 
+**Q. Which Country IP do i need to run this?**
+
+**Ans.** India.
+
+**Q. Where can I find the latest scraped dataset?**
+
+**Ans.** here [kaggle](https://www.kaggle.com/datasets/goelyash/disney-hotstar-tv-and-movie-catalog).
+
 ## License 
 Shield: [![CC BY-SA 4.0][cc-by-sa-shield]][cc-by-sa]
 
