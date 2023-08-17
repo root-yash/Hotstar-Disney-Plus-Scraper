@@ -1,7 +1,7 @@
 appdirs==1.4.4
 beautifulsoup4==4.11.1
 bs4==0.0.1
-certifi==2022.6.15
+certifi==2023.7.22
 colorama==0.4.5
 importlib-metadata==4.12.0
 nest-asyncio==1.5.5
